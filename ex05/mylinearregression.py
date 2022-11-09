@@ -20,21 +20,18 @@ class MyLinearRegression:
         try:
             for i in range(self.max_iter):
                 nabla_J = self.gradient(x, y)
-                self.thetas = self.thetas - self.alpha * nabla_J
+                self.thetas -= self.alpha * nabla_J
             return self.thetas
         except:
             return None
     
     def predict_(self, x):
-        try:
             if type(x) != np.ndarray or type(self.thetas) != np.ndarray:
                 return None
             if not len(x) or not len(self.thetas):
                 return None
             extended_x = np.hstack((np.ones((x.shape[0], 1)), x))
             return extended_x.dot(self.thetas)
-        except:
-            return None
 
     def loss_elem_(self, y, y_hat):
         try:
@@ -61,5 +58,20 @@ class MyLinearRegression:
             if y.shape[1] != 1 or y_hat.shape[1] != 1:
                 return None
             return float(1 / (2 * y.shape[0]) * (y_hat - y).T.dot(y_hat - y))
+        except:
+            return None
+
+    @staticmethod
+    def mse_(y, y_hat):
+        try:
+            vectors = [y, y_hat]
+            for vector in vectors:
+                if type(vector) != np.ndarray or not len(vector):
+                    raise Exception("bad inputs")
+                if vector.ndim == 1:
+                    vector = vector.reshape(vector.shape[0], -1)
+                if vector.shape[1] != 1:
+                    raise Exception("bad inputs")
+            return float(1 / (y.shape[0]) * (y_hat - y).T.dot(y_hat - y))
         except:
             return None
