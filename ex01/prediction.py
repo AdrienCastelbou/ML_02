@@ -1,8 +1,15 @@
 import numpy as np
 
 def predict_(x, theta):
-    extended_x = np.hstack((np.ones((x.shape[0], 1)), x))
-    return extended_x.dot(theta)
+    try:
+        if type(x) != np.ndarray or type(theta) != np.array:
+            return None
+        if not len(x) or not len(theta):
+            return None
+        extended_x = np.hstack((np.ones((x.shape[0], 1)), x))
+        return extended_x.dot(theta)
+    except:
+        return None
 
 def main_test():
     x = np.arange(1,13).reshape((4,-1))

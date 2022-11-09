@@ -2,6 +2,10 @@ import numpy as np
 
 def simple_predict(x, theta):
     try:
+        if type(x) != np.ndarray or type(theta) != np.array:
+            return None
+        if not len(x) or not len(theta):
+            return None
         y_hat = np.zeros((x.shape[0], theta.shape[1]))
         for i in range(x.shape[0]):
             y_hat[i] += theta[0][0]
