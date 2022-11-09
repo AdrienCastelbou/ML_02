@@ -2,6 +2,8 @@ import numpy as np
 
 def data_spliter(x, y, proportion):
     try:
+        if type(x) != np.ndarray or type(y) != np.ndarray or type(proportion) != float:
+            return None
         l = x.shape[0]
         p = int(l * proportion)
         perm = np.random.permutation(len(x))
