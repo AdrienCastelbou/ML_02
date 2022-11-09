@@ -2,7 +2,7 @@ import numpy as np
 
 def simple_predict(x, theta):
     try:
-        if type(x) != np.ndarray or type(theta) != np.array:
+        if type(x) != np.ndarray or type(theta) != np.ndarray:
             return None
         if not len(x) or not len(theta):
             return None
