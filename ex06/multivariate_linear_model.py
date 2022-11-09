@@ -15,7 +15,7 @@ def output_scatter(x, y, y_hat, labels):
     plt.legend()
     plt.show()
 
-def perform_linear_regression(X, Y, theta, labels):
+def perform_uni_linear_regression(X, Y, theta, labels):
     myLR =  MyLR(theta, alpha = 2.5e-5, max_iter = 1500000)
     y_pred = myLR.predict_(X)
     output_scatter(X, Y, y_pred, labels)
@@ -27,24 +27,34 @@ def perform_linear_regression(X, Y, theta, labels):
 
 
 def univariate_linear_regression(data):
-        XAge = np.array(data[["Age"]])[:,0].reshape(-1,1)
-        Y = np.array(data[["Sell_price"]])[:,0].reshape(-1,1)
-        perform_linear_regression(XAge, Y, np.array([[1000], [-1]]), ["Sell price", "Predicted sell price", "x1: age (in years)", "y: sell price (in kiloeuros)"])
-        XThrust_power = np.array(data[["Thrust_power"]])[:,0].reshape(-1,1)
-        perform_linear_regression(XThrust_power, Y, np.array([[1000], [-1]]), ["Sell price", "Predicted sell price", "x2: thrust power (in 10Km/s", "y: sell price (in kiloeuros)"])
-        XTerameters = np.array(data[["Terameters"]])[:,0].reshape(-1,1)
-        perform_linear_regression(XTerameters, Y, np.array([[1000], [-1]]), ["Sell price", "Predicted sell price", "x3: distance totalizer value of spacecraft (in Tmeters) ", "y: sell price (in kiloeuros)"])
+    XAge = np.array(data[["Age"]])[:,0].reshape(-1,1)
+    Y = np.array(data[["Sell_price"]])[:,0].reshape(-1,1)
+    perform_uni_linear_regression(XAge, Y, np.array([[1000], [-1]]), ["Sell price", "Predicted sell price", "x1: age (in years)", "y: sell price (in kiloeuros)"])
+    XThrust_power = np.array(data[["Thrust_power"]])[:,0].reshape(-1,1)
+    perform_uni_linear_regression(XThrust_power, Y, np.array([[1000], [-1]]), ["Sell price", "Predicted sell price", "x2: thrust power (in 10Km/s", "y: sell price (in kiloeuros)"])
+    XTerameters = np.array(data[["Terameters"]])[:,0].reshape(-1,1)
+    perform_uni_linear_regression(XTerameters, Y, np.array([[1000], [-1]]), ["Sell price", "Predicted sell price", "x3: distance totalizer value of spacecraft (in Tmeters) ", "y: sell price (in kiloeuros)"])
 
 
+def mulltivariate_linear_regression(data):
+    X = np.array(data[["Age","Thrust_power","Terameters"]])
+    Y = np.array(data[["Sell_price"]])
+    my_lreg = MyLR(np.array([[1.0], [1.0], [1.0], [1.0]]) , alpha = 0.00005, max_iter = 600000)
+    y_pred = my_lreg.predict_(X)
+    print(MyLR.mse_(Y,y_pred))
+    my_lreg.fit_(X,Y)
+    print(my_lreg.thetas)
+    y_pred = my_lreg.predict_(X)
+    print(MyLR.mse_(Y,y_pred))
+    output_scatter(X[:,0].reshape(-1, 1), Y, y_pred, ["Sell price", "Predicted sell price", "x1: age (in years)", "y: sell price (in kiloeuros)"])
+    output_scatter(X[:,1].reshape(-1, 1), Y, y_pred, ["Sell price", "Predicted sell price", "x2: thrust power (in 10Km/s", "y: sell price (in kiloeuros)"])
+    output_scatter(X[:,2].reshape(-1, 1), Y, y_pred, ["Sell price", "Predicted sell price", "x3: distance totalizer value of spacecraft (in Tmeters) ", "y: sell price (in kiloeuros)"])
 
 def main():
     data = pd.read_csv("spacecraft_data.csv")
     univariate_linear_regression(data)
+    mulltivariate_linear_regression(data)
     return 
-    XAge = np.array(data["Age"]).reshape(1, -1)
-    XThrust_power = np.array(data["Thrust_power"]).reshape(1, -1)
-    XTerameters = np.array(data["Terameters"]).reshape(1, -1)
-    YSell_price = np.array(data["Sell_price"]).reshape(1, -1)
 
 if __name__ == "__main__":
     main()
