@@ -9,6 +9,8 @@ class MyLinearRegression:
 
     def gradient(self, x, y):
         try:
+            if type(x) != np.ndarray or type(y) != np.ndarray or type(self.thetas) != np.ndarray:
+                return None
             l = len(x)
             x = np.hstack((np.ones((x.shape[0], 1)), x))
             nabla_J = x.T.dot(x.dot(self.thetas) - y) / l
@@ -18,6 +20,8 @@ class MyLinearRegression:
 
     def fit_(self, x, y):
         try:
+            if type(x) != np.ndarray or type(y) != np.ndarray or type(self.theta) != np.ndarray or type(self.alpha) != float or type(self.max_iter) != int:
+                return None
             for i in range(self.max_iter):
                 nabla_J = self.gradient(x, y)
                 self.thetas -= self.alpha * nabla_J
@@ -63,4 +67,6 @@ class MyLinearRegression:
 
     @staticmethod
     def mse_(y, y_hat):
-            return float(1 / (y.shape[0]) * (y_hat - y).T.dot(y_hat - y))
+        if type(y) != np.ndarray or type(y_hat) != np.ndarray:
+            return None
+        return float(1 / (y.shape[0]) * (y_hat - y).T.dot(y_hat - y))
