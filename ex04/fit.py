@@ -23,11 +23,14 @@ def gradient(x, y, theta):
         return None
 
 def fit_(x, y, theta, alpha, max_iter):
-    new_theta = theta.astype(float)
-    for i in range(max_iter):
-        nabla_J = gradient(x, y, new_theta)
-        new_theta -= alpha * nabla_J
-    return new_theta
+    try:
+        new_theta = theta.astype(float)
+        for i in range(max_iter):
+            nabla_J = gradient(x, y, new_theta)
+            new_theta -= alpha * nabla_J
+        return new_theta
+    except:
+        return None
 
 
 x = np.array([[0.2, 2., 20.], [0.4, 4., 40.], [0.6, 6., 60.], [0.8, 8., 80.]])
