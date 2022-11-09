@@ -24,6 +24,8 @@ def gradient(x, y, theta):
 
 def fit_(x, y, theta, alpha, max_iter):
     try:
+        if type(x) != np.ndarray or type(y) != np.ndarray or type(theta) != np.ndarray or type(alpha) != float or type(max_iter) != int:
+            return None
         new_theta = theta.astype(float)
         for i in range(max_iter):
             nabla_J = gradient(x, y, new_theta)
