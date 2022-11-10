@@ -11,7 +11,7 @@ def add_polynomial_features(x, power):
 def main_test():
     x = np.arange(1,6).reshape(-1, 1)
     print(add_polynomial_features(x, 3))
-    print(add_polynomial_features(, 6))
+    print(add_polynomial_features(x, 6))
 
 if __name__ == "__main__":
     main_test()
