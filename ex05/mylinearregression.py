@@ -20,7 +20,7 @@ class MyLinearRegression:
 
     def fit_(self, x, y):
         try:
-            if type(x) != np.ndarray or type(y) != np.ndarray or type(self.theta) != np.ndarray or type(self.alpha) != float or type(self.max_iter) != int:
+            if type(x) != np.ndarray or type(y) != np.ndarray or type(self.thetas) != np.ndarray or type(self.alpha) != float or type(self.max_iter) != int:
                 return None
             for i in range(self.max_iter):
                 nabla_J = self.gradient(x, y)
