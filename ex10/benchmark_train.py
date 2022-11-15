@@ -1,5 +1,4 @@
 import sys
-import os
 sys.path.append('../')
 from ex05.mylinearregression import MyLinearRegression as MyLR
 from ex09.data_spliter import data_spliter
