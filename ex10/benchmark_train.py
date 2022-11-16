@@ -7,14 +7,14 @@ from  ex07.polynomial_model import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from concurrent.futures import *
-import csv
-
+import pickle
 
 def perform_regression(X, Y, theta):
-    myLR =  MyLR(theta, alpha = 0.2e-10, max_iter = 50)
+    print("start")
+    myLR =  MyLR(theta, alpha = 1e-2, max_iter = 1000000)
     myLR.fit_(X, Y)
-    return myLR.thetas
+    print("end")
+    return myLR
 
 
 def vizualize_models_perf(perfs):
@@ -23,33 +23,17 @@ def vizualize_models_perf(perfs):
     plt.ylabel("MSE")
     plt.show()
 
-def save_models_parameters(results):
-    max_theta = 0
-    entries = []
-    for elem in results:
-        if results[elem].shape[0] > max_theta:
-            max_theta = results[elem].shape[0]
-        entry = []
-        entry.append(elem)
-        for theta in results[elem]:
-            entry.append(theta[0])
-        entries.append(entry)
-    header = ["name"]
-    for i in range(max_theta):
-        header.append(f"theta{i}")
-    with open('models.csv', 'w') as file:
-    # 2. Create a CSV writer
-        writer = csv.writer(file)
-        writer.writerow(header)
-        writer.writerows(entries)
 
+def save_models(results):
+    file = open('models.pickle', 'wb')
+    pickle.dump(results, file)
+    file.close()
     
 def evaluate_models(models, X_test, Y_test):
     best_model = ""
-    best_mse = 100000000000000
+    best_mse = 1000000000000000000
     for elem in models:
-        theta = models[elem]
-        myLR =  MyLR(theta)
+        myLR =  models[elem]
         X_weight = add_polynomial_features(X_test[:, 0].reshape(-1, 1), int(elem[1]))
         X_distance = add_polynomial_features(X_test[:, 1].reshape(-1, 1), int(elem[3]))
         X_time = add_polynomial_features(X_test[:, 2].reshape(-1, 1), int(elem[5]))
@@ -59,34 +43,37 @@ def evaluate_models(models, X_test, Y_test):
         if current_mse < best_mse:
             best_model = elem
             best_mse = current_mse
-    print("best model :", best_model)
+    print("best model :", best_model, ", ", best_mse)
 
-def regression_engine(data):
+def normalize(X):
+    n_X = X.reshape(X.shape[0] * X.shape[1], 1)
+    mean_X = np.mean(n_X)
+    std_X = np.std(n_X)
+    return (X - mean_X) / std_X 
+
+def engine_features(X):
+    engine_X =  add_polynomial_features(X, 4)
+    n_X = normalize(engine_X)
+    return n_X
+
+def regression_engine(data):    
     X = np.array(data[["weight", "prod_distance", "time_delivery"]])
     Y = np.array(data[["target"]])
     X_train, X_test, Y_train, Y_test = data_spliter(X, Y, 0.5)
-    X_train_weight = X_train[:, 0].reshape(-1, 1)
-    X_train_distance = X_train[:, 1].reshape(-1, 1)
-    X_train_time = X_train[:, 2].reshape(-1, 1)
-    X_train_weight = add_polynomial_features(X_train_weight, 4)
-    X_train_distance = add_polynomial_features(X_train_distance, 4)
-    X_train_time = add_polynomial_features(X_train_time, 4)
-    futures = []
+    X_train_weight = engine_features(X_train[:, 0].reshape(-1, 1))
+    X_train_distance = engine_features(X_train[:, 1].reshape(-1, 1))
+    X_train_time = engine_features(X_train[:, 2].reshape(-1, 1))
+    Y_train = normalize(Y_train)
     results = {}
-    executor = ProcessPoolExecutor()
-    for w_rank in range(1, 3):
-        for d_rank in range(1, 3):
-            for t_rank in range(1, 3):
+    for w_rank in range(1, 5):
+        for d_rank in range(1, 5):
+            for t_rank in range(1, 5):
+                print(f"w{w_rank}d{d_rank}t{t_rank}")
                 X_train_features = np.hstack((X_train_weight[:,:w_rank], X_train_distance[:,:d_rank], X_train_time[:, :t_rank]))
-                future = executor.submit(perform_regression, X_train_features, Y_train, np.random.rand(X_train_features.shape[1] + 1, 1))
-                futures.append(future)
-                results[f"w{w_rank}d{d_rank}t{t_rank}"] = future
-    done, not_done = wait(futures, return_when=ALL_COMPLETED)
-    for elem in results:
-        results[elem] = results[elem].result()
-    save_models_parameters(results)
+                theta = np.random.rand(X_train_features.shape[1] + 1, 1).reshape(-1, 1)
+                results[f"w{w_rank}d{d_rank}t{t_rank}"] = perform_regression(X_train_features, Y_train, theta)
+    save_models(results)
     evaluate_models(results, X_test, Y_test)
-    executor.shutdown()
     return
     
 
