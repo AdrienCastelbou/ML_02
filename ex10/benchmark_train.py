@@ -46,15 +46,15 @@ def evaluate_models(models, X_test, Y_test):
     print("best model :", best_model, ", ", best_mse)
 
 def normalize(X):
-    n_X = X.reshape(X.shape[0] * X.shape[1], 1)
-    mean_X = np.mean(n_X)
-    std_X = np.std(n_X)
+    mean_X = np.mean(X)
+    std_X = np.std(X)
     return (X - mean_X) / std_X 
 
 def engine_features(X):
-    engine_X =  add_polynomial_features(X, 4)
-    n_X = normalize(engine_X)
-    return n_X
+    poly_x =  add_polynomial_features(X, 4)
+    for i in range(4):
+        poly_x[:, i] = normalize(poly_x[:, i])
+    return poly_x
 
 def regression_engine(data):    
     X = np.array(data[["weight", "prod_distance", "time_delivery"]])
