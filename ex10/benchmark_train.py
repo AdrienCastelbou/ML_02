@@ -31,7 +31,7 @@ def save_models(results):
     
 def evaluate_models(models, X_test, Y_test):
     best_model = ""
-    best_mse = 1000000000000000000
+    best_mse = -1
     for elem in models:
         myLR =  models[elem]
         X_weight = add_polynomial_features(X_test[:, 0].reshape(-1, 1), int(elem[1]))
@@ -40,7 +40,7 @@ def evaluate_models(models, X_test, Y_test):
         enginered_X = np.hstack((X_weight, X_distance, X_time))
         Y_hat = myLR.predict_(enginered_X)
         current_mse = MyLR.mse_(Y_test, Y_hat)
-        if current_mse < best_mse:
+        if best_mse < 0 or current_mse < best_mse:
             best_model = elem
             best_mse = current_mse
     print("best model :", best_model, ", ", best_mse)
