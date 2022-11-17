@@ -2,13 +2,11 @@ import sys
 sys.path.append('../')
 from ex05.mylinearregression import MyLinearRegression as MyLR
 from ex09.data_spliter import data_spliter
-from ex08.polynomial_train import add_polynomial_features
 from ex07.polynomial_model import *
 from ex10.benchmark_train import *
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from concurrent.futures import *
 import pickle
 
 def transform_data(X, model):
