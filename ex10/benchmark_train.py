@@ -11,7 +11,7 @@ import pickle
 
 def perform_regression(X, Y, theta):
     print("start")
-    myLR =  MyLR(theta, alpha = 1e-2, max_iter = 1000000)
+    myLR =  MyLR(theta, alpha = 1e-2, max_iter = 1500000)
     myLR.fit_(X, Y)
     print("end")
     return myLR
@@ -45,6 +45,11 @@ def evaluate_models(models, X_test, Y_test):
             best_mse = current_mse
     print("best model :", best_model, ", ", best_mse)
 
+def unormalize(n_X, X):
+    mean_X = np.mean(X)
+    std_X = np.std(X)
+    return n_X * std_X + mean_X
+
 def normalize(X):
     mean_X = np.mean(X)
     std_X = np.std(X)
@@ -71,7 +76,8 @@ def regression_engine(data):
                 print(f"w{w_rank}d{d_rank}t{t_rank}")
                 X_train_features = np.hstack((X_train_weight[:,:w_rank], X_train_distance[:,:d_rank], X_train_time[:, :t_rank]))
                 theta = np.random.rand(X_train_features.shape[1] + 1, 1).reshape(-1, 1)
-                results[f"w{w_rank}d{d_rank}t{t_rank}"] = perform_regression(X_train_features, Y_train, theta)
+                myLR = perform_regression(X_train_features, Y_train, theta)
+                results[f"w{w_rank}d{d_rank}t{t_rank}"] = myLR
     save_models(results)
     evaluate_models(results, X_test, Y_test)
     return
