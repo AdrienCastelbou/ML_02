@@ -10,7 +10,7 @@ def data_spliter(x, y, proportion):
         s_x = x[perm]
         s_y = y[perm]
         x_train, y_train = s_x[:n_train], s_y[:n_train]
-        x_test, y_test =  s_x[n_test:], s_y[n_test:]
+        x_test, y_test =  s_x[-n_test:], s_y[-n_test:]
         return x_train, x_test, y_train, y_test
     except:
         return None
